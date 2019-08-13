@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/kbooth1000/serverless-functions-practice/issues"
   },
-  "homepage": "https://github.com/kbooth1000/serverless-functions-practice#readme"
+  "homepage": "https://github.com/kbooth1000/serverless-functions-practice#readme",
+  "dependencies": {
+    "dotenv": "^8.0.0"
+  }
 }
