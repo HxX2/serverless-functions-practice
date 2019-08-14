@@ -18,5 +18,8 @@
   "homepage": "https://github.com/kbooth1000/serverless-functions-practice#readme",
   "dependencies": {
     "dotenv": "^8.0.0"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^0.8.3"
   }
 }
