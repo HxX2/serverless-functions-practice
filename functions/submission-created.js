@@ -1,5 +1,7 @@
 require('dotenv').config()
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
+console.log('SUBMISSION-CREATED');
+
 const { EMAIL_TOKEN } = process.env
 exports.handler = async event => {
   const uid = Math.ceil(Math.rand() * 9999);
