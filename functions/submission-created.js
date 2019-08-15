@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const { EMAIL_TOKEN } = process.env
 exports.handler = async event => {
   console.log('SUBMISSION-CREATED');
-  const uid = Math.ceil(Math.rand() * 9999);
+  // const uid = Math.ceil(Math.random() * 9999);
   const email = JSON.parse(event.body).payload.email
   console.log(`Recieved a submission: ${email}`)
   return fetch(`https://api.buttondown.email/v1/subscribers`, {
