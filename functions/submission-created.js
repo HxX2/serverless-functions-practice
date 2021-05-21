@@ -1,23 +1,50 @@
-require('dotenv').config()
-const fetch = require('node-fetch');
+require("dotenv").config(); // read .env file if present.
 
-const { EMAIL_TOKEN } = process.env
-exports.handler = async event => {
-  console.log('SUBMISSION-CREATED');
-  // const uid = Math.ceil(Math.random() * 9999);
-  const email = JSON.parse(event.body).payload.email
-  console.log(`Recieved a submission: ${email}`)
-  return fetch(`https://api.buttondown.email/v1/subscribers`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Token ${EMAIL_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email }),
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log(`Submitted to Buttondown:\n ${data}`)
+const nodemailer = require("nodemailer");
+const createHtmlMail = require("./modules/mail-template"); // this function returns html email code
+
+exports.handler = function(event, context, callback) {
+  const user = process.env.MAIL_USER;       // some@mail.com
+  const pass = process.env.MAIL_PASSWORD;   // 42isthecoolestnumber
+  
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: true,
+    auth: { user, pass }
+  });
+  
+  // Parse data sent in form hook (email, name etc)
+  const { data } = JSON.parse(event.body);
+  
+  // make sure we have data and email
+  if (!data || !data.email) {
+    return callback(null, {
+      statusCode: 400,
+      body: 'Mailing details not provided'
     })
-    .catch(error => ({ statusCode: 422, body: String(error) }))
-}
+  }
+  
+  let mailOptions = {
+    from: `"Maciej 🥝 Smoothielicious" <${user}>`,
+    to: data.email, // send to email from contact form
+    subject: "🍇 Contact submission received! 🍌",
+    html: createHtmlMail({ name: data.name }) // returns html code with interpolated variables
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    // handle errors
+    if (error) {
+      return callback(null, {
+        statusCode: 500,
+        body: JSON.stringify(error)
+      });
+    }
+
+    // success!
+    callback(null, {
+      statusCode: 200,
+      body: "mail sent"
+    });
+  });
+};
